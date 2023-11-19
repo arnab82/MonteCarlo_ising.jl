@@ -1,2 +1,5 @@
 using Test
-@test 1==1
+using MonteCarlo_ising
+@testset "MonteCarlo_ising.jl" begin
+    include("./energy.jl")
+end
