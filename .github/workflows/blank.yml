@@ -30,10 +30,19 @@ jobs:
         arch:
           - x64
     steps:
-    - name: Run Julia tests
-        run: echo "Contents of current directory"
+      - uses: actions/checkout@v2
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
+      - name: Install dependencies
+        run: julia --color=yes --project=./ -e 'using Pkg; Pkg.instantiate();'
+      - name: Run Julia tests
+        run: |
+          echo "Contents of current directory"
           julia --color=yes --project=./ -e 'using Pkg; Pkg.precompile(); Pkg.test();'
-      - uses: julia-actions/julia-processcoverage@v1
+      
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
