@@ -1,11 +1,1 @@
-ERROR: LoadError: oooooooooooooooopssssss......
-Stacktrace:
- [1] error(s::String)
-   @ Base ./error.jl:33
- [2] top-level scope
-   @ ~/workspace/MonteCarlo_ising/deps/build.jl:1
- [3] include(fname::String)
-   @ Base.MainInclude ./client.jl:451
- [4] top-level scope
-   @ none:5
-in expression starting at /home/arnabbachhar/workspace/MonteCarlo_ising/deps/build.jl:1
+MonteCarlo_ising is being built...
