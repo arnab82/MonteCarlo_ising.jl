@@ -31,8 +31,7 @@ jobs:
           - x64
     steps:
     - name: Run Julia tests
-        run:
-          echo "Contents of current directory"
+        run: echo "Contents of current directory"
           julia --color=yes --project=./ -e 'using Pkg; Pkg.precompile(); Pkg.test();'
       - uses: julia-actions/julia-processcoverage@v1
   # This workflow contains a single job called "build"
