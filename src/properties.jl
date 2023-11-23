@@ -1,5 +1,18 @@
 
 function magnetization(spin_array::IsingModel, skipped_points::Int64, total_points::Int64, T::Float64, k::Float64=1.0)
+    """
+    parameters:
+    spin_array: IsingModel object
+    skiped_points: number of points to skip
+    total_points: total number of points
+    T: temperature
+    k: Boltzmann constant
+    _________________________
+    returns:
+    ms_j: mean magnetization
+    ms_squared_j: mean squared magnetization
+    """
+
     J = spin_array.J
     bj = J / (k * T)
     lattice = spin_array.lattice
@@ -11,7 +24,17 @@ function magnetization(spin_array::IsingModel, skipped_points::Int64, total_poin
     return ms_j, ms_squared_j
 end
 
-function magnetic_susceptibility(spin_array::IsingModel, skipped_points::Int64, total_points::Int64, T)
+function magnetic_susceptibility(spin_array::IsingModel, skipped_points::Int64, total_points::Int64, T::Float64)
+    """
+    parameters:
+    spin_array: IsingModel object
+    skiped_points: number of points to skip
+    total_points: total number of points
+    T: temperature
+    _________________________
+    returns:
+    chi: magnetic susceptibility
+    """
     Ms, Ms_squared = magnetization(spin_array, skipped_points, total_points, T)
     N = spin_array.N
     k = 1.0
@@ -26,7 +49,18 @@ function magnetic_susceptibility(spin_array::IsingModel, skipped_points::Int64, 
     return chi
 end
 
-function standard_deviation_spin(spin_array::IsingModel, skipped_points::Int64, total_points::Int64, T) 
+function standard_deviation_spin(spin_array::IsingModel, skipped_points::Int64, total_points::Int64, T::Float64) 
+    """
+    parameters:
+    spin_array: IsingModel object
+    skiped_points: number of points to skip
+    total_points: total number of points
+    T: temperature
+    _________________________
+    returns:
+    sigma_m: standard deviation of magnetization
+
+    """
     Ms, Ms_squared = magnetization(spin_array, skipped_points, total_points, T)
     return sqrt(Ms_squared - Ms^2)
 end
@@ -36,7 +70,17 @@ Heat capacity, C_v=frac{sigma^2_E}{T^2}
 =(<E^2>-<E>^2).beta^2k^2
 =sigma_{E/J}^2.(beta J)^2k^2
 """
-function specific_heat(spin_array::IsingModel, skipped_points::Int64, total_points::Int64, T)
+function specific_heat(spin_array::IsingModel, skipped_points::Int64, total_points::Int64, T::Float64)
+    """
+    parameters:
+    spin_array: IsingModel object
+    skiped_points: number of points to skip
+    total_points: total number of points
+    T: temperature
+    _________________________
+    returns:
+    C_v: specific heat
+    """
     N = spin_array.N
     k = 1.0
     bj = spin_array.J / (k * T)
@@ -45,6 +89,24 @@ function specific_heat(spin_array::IsingModel, skipped_points::Int64, total_poin
     return (E_squared_mean - E_mean^2) * (k * bj^2)
 
 end
+
+function cumulant_spin(spin_array::IsingModel, skipped_points::Int64, total_points::Int64, T::Float64)
+    """
+    parameters:
+    ms_squared_avg: mean squared magnetization
+    ms_avg: mean magnetization
+    _________________________
+    returns:
+    U: cumulant
+    """
+    k = 1.0
+    bj = spin_array.J / (k * T)
+    spin, energies, spins = metropolis(spin_array, total_points, bj, energy_manual(spin_array))
+    ms_squared_j = mean(spin[skipped_points:end] .^ 2)
+    m_4 = mean(spin[skipped_points:end] .^ 4)
+    return 1.0 - m_4 / (3.0 * ms_squared_j^2)
+end
+
 # temperatures = [1.6, 2.0, 2.16, 2.34, 2.43, 2.76, 3.35]
 # skipped_points = 10000
 # total_points = 200000
