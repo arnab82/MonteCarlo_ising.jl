@@ -91,6 +91,7 @@ function metropolis(spin_array::IsingModel, times::Int64, Bj::Float64, energy::F
     J=spin_array.J
     spin_array = copy(spin_array.lattice)
     net_spin = zeros(times - 1)
+    spin_per_site=zeros(times-1)
     net_energy = zeros(times - 1)
     
     for t in 1:times - 1
@@ -132,13 +133,13 @@ function metropolis(spin_array::IsingModel, times::Int64, Bj::Float64, energy::F
             spin_array[x, y] = spin_f
             energy += delta_E
         end
-
+        spin_per_site[t]=sum(spin_array)/N^2
         net_spin[t] = sum(spin_array)
         net_energy[t] = energy
 
     end
 
-    return net_spin, net_energy
+    return spin_per_site, net_energy, net_spin
 end
 # #For 75% negative spin configuration
 # spins,energies=metropolis(lattice_n,100000,0.86,energy_manual(lattice_n))
@@ -169,7 +170,7 @@ function get_spin_energy(lattice::IsingModel, Bjs::AbstractArray,skipped_points:
     E_mean = zeros(length(Bjs))
     E_stds = zeros(length(Bjs))
     for (j, bj) in enumerate(Bjs)
-        spins, energies = metropolis(lattice, total_points, bj, energy_manual(lattice))
+        spin_per_site, energies,spins = metropolis(lattice, total_points, bj, energy_manual(lattice))
         ms[j] = mean(spins[skipped_points:end]) / N^2
         E_mean[j] = mean(energies[skipped_points:end])
         E_stds[j] = std(energies[skipped_points:end])
