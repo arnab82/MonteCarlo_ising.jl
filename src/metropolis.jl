@@ -59,6 +59,42 @@ function periodic_boundary_conditions_manual(x, y, N::Int64)
     return x_p1, x_m1, y_p1, y_m1
 end
 
+function create_periodic_boundary_lookup_table(N::Int64)
+    """
+    Create a lookup table for periodic boundary conditions.
+    """
+    lookup_table = Dict{Tuple{Int64, Int64}, Tuple{Int64, Int64, Int64, Int64}}()
+
+    for x in 1:N
+        for y in 1:N
+            x_p1 = mod1(x + 1, N)
+            x_m1 = mod1(x - 1, N)
+            y_p1 = mod1(y + 1, N)
+            y_m1 = mod1(y - 1, N)
+
+            lookup_table[(x, y)] = (x_p1, x_m1, y_p1, y_m1)
+        end
+    end
+
+    return lookup_table
+end
+
+function periodic_boundary_conditions_lookup(x, y, lookup_table)
+    """
+    parameters:
+    x: x coordinate of the spin
+    y: y coordinate of the spin
+    lookup_table: a precomputed lookup table for periodic boundary conditions
+    _________________________
+    returns:
+    x_p1: x coordinate of the spin to the right
+    x_m1: x coordinate of the spin to the left
+    y_p1: y coordinate of the spin to the top
+    y_m1: y coordinate of the spin to the bottom
+    """
+    return lookup_table[(x, y)]
+end
+
 function calculate_probability(delta_E::Float64, Bj::Float64)
     """
     parameters
@@ -74,6 +110,37 @@ function calculate_probability(delta_E::Float64, Bj::Float64)
         return exp(-Bj * delta_E)
     end
 end
+
+function create_probability_lookup_table( J,Bj::Float64)
+    """
+    Create a lookup table for probabilities.
+    """
+
+    lookup_table = Dict{Float64, Float64}()
+    for delta_E in -4J:4J
+        if delta_E <= 0
+            lookup_table[delta_E]=1.0
+        else
+            probability = calculate_probability(delta_E, Bj)
+            lookup_table[delta_E] = probability
+        end
+    end
+
+    return lookup_table
+end
+
+function calculate_probability_lookup(delta_E::Float64, Bj,lookup_table)
+    """
+    parameters
+    delta_E: energy difference between the initial and final state
+    lookup_table: a precomputed lookup table for probabilities
+    _________________________
+    return:
+    probability of changing state
+    """
+    return get(lookup_table, delta_E, calculate_probability(delta_E, Bj))
+end
+
 function metropolis(spin_array::IsingModel, times::Int64, Bj::Float64, energy::Float64)
     """
     parameters:
@@ -93,7 +160,8 @@ function metropolis(spin_array::IsingModel, times::Int64, Bj::Float64, energy::F
     net_spin = zeros(times - 1)
     spin_per_site=zeros(times-1)
     net_energy = zeros(times - 1)
-    
+    lookup_table = create_periodic_boundary_lookup_table(N)
+    lookup_table_prob = create_probability_lookup_table(J,Bj)
     for t in 1:times - 1
         # choosing random spin and flipping it
         x = rand(1:N)
@@ -108,7 +176,9 @@ function metropolis(spin_array::IsingModel, times::Int64, Bj::Float64, energy::F
         # periodic boundary conditions
 
         # x_p1, x_m1, y_p1, y_m1 = periodic_boundary_conditions(x, y, N)
-        x_p1, x_m1, y_p1, y_m1 = periodic_boundary_conditions_manual(x, y, N)
+        # x_p1, x_m1, y_p1, y_m1 = periodic_boundary_conditions_manual(x, y, N)
+        
+        x_p1, x_m1, y_p1, y_m1 = periodic_boundary_conditions_lookup(x, y, lookup_table)
 
         #calculating energy difference for spin configuration  i and f
         E_i += J*-spin_i * spin_array[x_m1, y]
@@ -127,7 +197,9 @@ function metropolis(spin_array::IsingModel, times::Int64, Bj::Float64, energy::F
 
         # changing state with probability
 
-        prob = calculate_probability(delta_E, Bj)
+        # prob = calculate_probability(delta_E, Bj)
+        
+        prob = calculate_probability_lookup(delta_E, Bj,lookup_table_prob)
 
         if rand() < prob
             spin_array[x, y] = spin_f

@@ -13,8 +13,11 @@ This repository contains a Julia implementation of a Monte Carlo simulation for 
 ## Installation
 ```bash
 git clone https://github.com/arnab82/MonteCarlo_ising.jl.git
+cd MonteCarlo_ising.jl
 julia --project=./ -tauto
 using Pkg
-Pkg.build("PyCall")
+Pkg.instantiate()
+Pkg.add("Plots")
+Pkg.precompile()
 using MonteCarlo_ising
 Pkg.test()
