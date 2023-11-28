@@ -1,7 +1,10 @@
 # Monte Carlo Simulation for 2D Ising Model
 ==============================
+
 [//]: # (Badges)
 [![GitHub Actions Build Status](https://github.com/arnab82/MonteCarlo_ising.jl/.github/workflows/blank.yml//badge.svg)](https://github.com/arnab82/MonteCarlo_ising.jl/actions)
+[![branch parameter]
+(https://github.com/arnab82/MonteCarlo_ising.jl/.github/workflows/blank.yml//badge.svg?branch=master)]
 
 ## Overview
 
