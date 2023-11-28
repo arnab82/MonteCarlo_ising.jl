@@ -25,8 +25,7 @@ Pkg.add("Plots")
 Pkg.precompile()
 using MonteCarlo_ising
 Pkg.test()
-
-
+```
 ## Copyright
 
 Copyright (c) 2023, Arnab Bachhar
