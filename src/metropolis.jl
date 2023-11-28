@@ -1,5 +1,3 @@
-
-using Plots
 function periodic_boundary_conditions(x, y, N::Int64)
     """
     parameters:

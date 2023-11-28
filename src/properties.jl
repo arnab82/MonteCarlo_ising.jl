@@ -43,7 +43,7 @@ function magnetic_susceptibility(spin_array::IsingModel, skipped_points::Int64, 
     if T > T_c
         chi = (Ms_squared) * (N^2) / (k * T)
     elseif T < T_c
-        chi = (Ms_squared - Ms^2) * (N^2) / (k * T)
+        chi = (Ms_squared - Ms.^2) * (N^2) / (k * T)
     end
 
     return chi
@@ -107,9 +107,51 @@ function cumulant_spin(spin_array::IsingModel, skipped_points::Int64, total_poin
     return 1.0 - m_4 / (3.0 * ms_squared_j^2)
 end
 
+function autocorrelation_montecarlo(spin_array::IsingModel, total_points::Int64, l::Int64, T::Float64)
+    """
+    parameters:
+    spin_array: IsingModel object
+    total_points: total number of points
+    l: lag parameter for autocorrelation
+    T: temperature
+    _________________________
+    returns:
+    autocorrelation: autocorrelation
+    """
+    numerator = 0.0
+    denominator = 0.0
+    k = 1.0
+    bj = spin_array.J / (k * T)
+    spin, energies, spins = metropolis(spin_array, total_points, bj, energy_manual(spin_array))
+    ms_j = abs(mean(spin))
+    # display(ms_j)
+    for i in 1:total_points - l-1
+        numerator += abs(spin[i]) * abs(spin[i + l]) - ms_j^2
+    end
+    for i in 1:total_points-1
+        denominator += abs(spin[i]) * abs(spin[i]) - ms_j^2
+    end
+    autocorrelation = numerator / denominator
+    # display(autocorrelation)
+    return autocorrelation
+end
+
 # temperatures = [1.6, 2.0, 2.16, 2.34, 2.43, 2.76, 3.35]
 # skipped_points = 10000
 # total_points = 200000
+# total_points = 400000
+# l=150
+# J=1.0
+# lattice_n=IsingModel(5,J, false)  
+# autocorr=[]
+# plt = plot(size=(800, 500), legend=:topright, xlabel="l", ylabel="autocorrelation", grid=false)
+# autocorrelation_values = autocorrelation_montecarlo(lattice_n,total_points,5,1.0)
+# for i in 1:l
+#     autocorrelation_values = autocorrelation_montecarlo(lattice_n,total_points,i,1.0)
+#     push!(autocorr,autocorrelation_values)
+# end
+# display(autocorr)
+# plot!(autocorr,label="N=50",linewidth=2,marker=:auto)
 # plot()
 # ms_values = Float64[]
 # chi_values = Float64[]
@@ -117,6 +159,7 @@ end
 #     spin_array = IsingModel(50)
 #     chi = magnetic_susceptibility(spin_array, skipped_points, total_points, temperature)
 #     ms, ms_squared = magnetization(spin_array, skipped_points, total_points, temperature)
+#     display(ms)
 #     push!(ms_values, ms)
 #     push!(chi_values, chi)
 # end

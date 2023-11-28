@@ -3,19 +3,19 @@ mutable struct IsingModel
     N::Int
     J::Float64
 
-    function IsingModel(N, J::Float64=1.0,positive_spins=true)
+    function IsingModel(N, J::Float64=1.0,positive_spins=true,percent_spin_type::Float64=0.75)
         init_random = rand(N, N)
         lattice = zeros(Int, N, N)
 
         for i in 1:N
             for j in 1:N
                 if positive_spins
-                    lattice[i, j] = init_random[i, j] <= 0.75 ? 1 : -1
-                    lattice[i, j] = init_random[i, j] > 0.75 ? -1 : 1
+                    lattice[i, j] = init_random[i, j] <= percent_spin_type ? 1 : -1
+                    lattice[i, j] = init_random[i, j] > percent_spin_type ? -1 : 1
 
                 else
-                    lattice[i, j] = init_random[i, j] < 0.75 ? -1 : 1
-                    lattice[i, j] = init_random[i, j] >= 0.75 ? +1 : -1
+                    lattice[i, j] = init_random[i, j] < percent_spin_type ? -1 : 1
+                    lattice[i, j] = init_random[i, j] >= percent_spin_type ? +1 : -1
                 end
             end
         end
