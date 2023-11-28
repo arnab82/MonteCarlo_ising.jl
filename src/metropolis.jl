@@ -224,7 +224,7 @@ end
 
 using LinearAlgebra
 using Statistics
-function get_spin_energy(lattice::IsingModel, Bjs::AbstractArray,skipped_points::Int64,total_points::Int64)
+function get_spin_energy(lattice::IsingModel, Bjs,skipped_points::Int64,total_points::Int64)
     """
     parameters:
     lattice: IsingModel object
@@ -242,8 +242,8 @@ function get_spin_energy(lattice::IsingModel, Bjs::AbstractArray,skipped_points:
     for (j, bj) in enumerate(Bjs)
         spin_per_site, energies,spins = metropolis(lattice, total_points, bj, energy_manual(lattice))
         ms[j] = mean(spins[skipped_points:end]) / N^2
-        E_mean[j] = mean(energies[skipped_points:end])
-        E_stds[j] = std(energies[skipped_points:end])
+        E_mean[j] = mean(energies[skipped_points:N*10:end])
+        E_stds[j] = std(energies[skipped_points:N*10:end])
     end
 
     return ms, E_mean, E_stds

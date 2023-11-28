@@ -1,4 +1,13 @@
 mutable struct IsingModel
+    """
+    parameters:
+    lattice: lattice of the Ising model
+    N: size of the lattice
+    J: coupling constant
+    _________________________
+    returns:
+    IsingModel object
+    """
     lattice::Matrix{Int}
     N::Int
     J::Float64

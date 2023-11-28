@@ -19,8 +19,8 @@ function magnetization(spin_array::IsingModel, skipped_points::Int64, total_poin
     N = spin_array.N
 
     spin, energies, spins = metropolis(spin_array, total_points, bj, energy_manual(spin_array))
-    ms_j = abs(mean(spin[skipped_points:end]))
-    ms_squared_j = mean(spin[skipped_points:end] .^ 2)
+    ms_j = abs(mean(spin[skipped_points:N*10:end]))
+    ms_squared_j = mean(spin[skipped_points:N*10:end] .^ 2)
     return ms_j, ms_squared_j
 end
 
@@ -99,11 +99,12 @@ function cumulant_spin(spin_array::IsingModel, skipped_points::Int64, total_poin
     returns:
     U: cumulant
     """
+    N = spin_array.N
     k = 1.0
     bj = spin_array.J / (k * T)
     spin, energies, spins = metropolis(spin_array, total_points, bj, energy_manual(spin_array))
-    ms_squared_j = mean(spin[skipped_points:end] .^ 2)
-    m_4 = mean(spin[skipped_points:end] .^ 4)
+    ms_squared_j = mean(spin[skipped_points:N*10:end] .^ 2)
+    m_4 = mean(spin[skipped_points:N*10:end] .^ 4)
     return 1.0 - m_4 / (3.0 * ms_squared_j^2)
 end
 
