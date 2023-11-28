@@ -1,9 +1,8 @@
 # Monte Carlo Simulation for 2D Ising Model
 ==============================
 [//]: # (Badges)
-[![GitHub Actions Build Status](https://github.com/arnab82/MonteCarlo_ising.jl/workflows/blank/badge.svg)](https://github.com/arnab82/MonteCarlo_ising.jl/actions?query=workflow%3ACI)
+[![GitHub Actions Build Status](https://github.com/arnab82/MonteCarlo_ising.jl/.github/workflows/blank.yml//badge.svg)
 
-[//]: # ([![codecov]&#40;https://codecov.io/gh/arnab82/MonteCarlo_ising.jl/branch/master/graph/badge.svg&#41;]&#40;https://codecov.io/gh/arnab82/MonteCarlo_ising.jl/branch/master&#41;)
 ## Overview
 
 This repository contains a Julia implementation of a Monte Carlo simulation for the 2D Ising model. The Ising model is a mathematical model in statistical mechanics that describes the magnetic properties of a two-dimensional lattice of spins.
