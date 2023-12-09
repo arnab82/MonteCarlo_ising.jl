@@ -1,5 +1,6 @@
 # Monte Carlo Simulation for 2D Ising Model
 ==============================
+
 [![CI](https://github.com/arnab82/MonteCarlo_ising.jl/actions/workflows/blank.yml/badge.svg)](https://github.com/arnab82/MonteCarlo_ising.jl/actions/workflows/blank.yml)
 
 
